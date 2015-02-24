@@ -17,7 +17,11 @@ gulp.task('test', function() {
 });
 
 gulp.task('watch', function() {
-  return gulp.watch('index.js', ['compile']);
+  return gulp.watch(['index.js'], ['compile']);
+});
+
+gulp.task('watch-test', function() {
+  return gulp.watch(['index.js','test/**/*.js'], ['test']);
 });
 
 // Default task

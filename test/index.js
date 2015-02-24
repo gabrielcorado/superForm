@@ -7,18 +7,36 @@ global.m = require('mithril');
 global.merge = require('merge');
 
 // Define variables
-var jsdom = require('jsdom').jsdom,
-    window = jsdom('<html><head></head><body></body></html>'),
-    document = window.document,
-    assert = require('assert'),
-    superForm = require('../index.js'),
-    testForm = null;
+var jsdom = require('jsdom').jsdom;
+var window = jsdom('<html><head></head><body></body></html>');
+var document = window.document;
+var assert = require('assert');
+var superForm = require('../index.js');
+var testForm = null;
 
 // Some test fields
-fields = [
-  { name: 'firstname', fieldType: 'input', type: 'text' },
-  { name: 'lastname', fieldType: 'input', type: 'text' }
-];
+paymentFields = [
+  { name: 'Boleto', fieldType: 'input', type: 'radio' },
+  { name: 'PagSeguro', fieldType: 'input', type: 'radio' },
+  { name: 'Cartão', fieldType: 'input', type: 'radio', subForms: [
+    new superForm('flags',[
+      { name: 'Visa', fieldType: 'input', type: 'radio', subForms: [
+        new superForm('installments', [
+          { name: '1x R$100,00', fieldType: 'input', type: 'radio'},
+          { name: '2x R$50,00', fieldType: 'input', type: 'radio'},
+          { name: '3x R$25,00', fieldType: 'input', type: 'radio'}
+        ]),
+      ]},
+      { name: 'Master Card', fieldType: 'input', type: 'radio', subForms: [
+        new superForm('installments', [
+          { name: '1x R$100,00', fieldType: 'input', type: 'radio'},
+          { name: '2x R$50,00', fieldType: 'input', type: 'radio'},
+          { name: '3x R$25,00', fieldType: 'input', type: 'radio'}
+        ]),
+      ]}
+    ])
+  ]}
+]
 
 // Tests
 describe('superForm', function(){
@@ -36,31 +54,26 @@ describe('superForm', function(){
     }
   });
 
-  it('should create a form', function(){
+  it('should create a form', function() {
     // superForm it!
-    testForm = new superForm('testForm', fields);
+    paymentForm = new superForm('paymentForm', paymentFields);
 
     // Assert
-    assert.notEqual(testForm, null);
-    assert.equal(testForm.fields, fields);
+    assert.notEqual(paymentForm, null);
+    assert.equal(paymentForm.fields, paymentFields);
   });
 
-  //
   it('should generate a field', function() {
     // Set state to result
-    result = undefined;
+    result = [];
 
     // Generate first field
     assert.doesNotThrow(function() {
-      result = testForm.generateField(fields[0]);
+      for(i = 0; i < paymentForm.fields.length ; i++)
+        result.push(paymentForm.generateField(paymentForm.fields[i]))
     });
 
     // Assert!
     assert.notEqual(result, undefined);
   });
-
-  //
-  // it('', function() {
-  //
-  // });
 });
