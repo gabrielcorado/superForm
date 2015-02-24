@@ -69,8 +69,7 @@ if( m === undefined )
   // @param [Object] options - Form options
   superForm = function(name, fields, options) {
     // Define default value for options
-    if( options === undefined )
-      options = {  };
+    options = utils.defineValue(options, {  });
 
     // Check arguements
     if( name === undefined || ( fields === undefined || ! utils.isA(fields, 'array') ) || ! utils.isA(options, 'object') )
@@ -112,6 +111,11 @@ if( m === undefined )
     }
   };
 
+  // generate each field and render
+  superForm.prototype.generate = function(options) {
+    // ...
+  };
+
   // Generates field value
   // @param [Object] field - Form field
   superForm.prototype.generateFieldId = function(field) {
@@ -120,27 +124,62 @@ if( m === undefined )
 
   // Generate field
   // @param [Object] field - Field that'll be generated
-  // Required object keys are: name and type
-  superForm.prototype.generateField = function(field) {
+  // Required object keys are: name and fieldType
+  superForm.prototype.generateField = function(field, options) {
     // Checks required keys
-    if( field.name === undefined || field.type === undefined )
+    if( field.name === undefined || field.fieldType === undefined )
       throw new ArgumentError('when you generate a field, name and type are required');
 
+    // Define options
+    options = utils.defineValue(options, {  });
+
+    // Set field id
+    var fieldId = this.generateFieldId(field);
+
     // Set default field values
-    field.id = utils.defineValue(field.id, this.genereteFieldId(field));
+    field.id = utils.defineValue(field.id, fieldId);
+    field.type = utils.defineValue(field.type, '');
     field.defaultValue = utils.defineValue(field.defaultValue, '', false);
     field.classes = utils.defineValue(field.classes, '');
     field.template = utils.defineValue(field.template, 'default');
+    field.collection = utils.defineValue(field.collection, false);
 
     // Field value
     field.value = m.prop(field.defaultValue);
+
+    // subForms
+    field.subForms = utils.defineValue(field.subForms, [  ]);
+    var _subForms = [  ];
+
+    // Each subForms
+    for( var i = 0; i < field.subForms.length; i++ ) {
+      // Get form
+      var form = field.subForms[i];
+
+      // Generate it and put it in other array
+      _subForms.push(form.generate());
+    }
+
+    var fieldTag = merge(true, superForm.fieldsTypes[field.fieldType]);
+
+    // Set attributes
+    fieldTag.attrs.class = field.classes;
+    fieldTag.attrs.value = field.value;
+    fieldTag.attrs.type = field.type;
+
+    // Define the content
+    var content = [  ];
+
+    // Add field to content
+    content.push(fieldTag);
+
+    // Add subForms to it
+    for( var contentI = 0; contentI < _subForms.length; contentI++ )
+      content.push(_subForms[contentI]);
+
+    // Return the template
+    return superForm.templates[field.template](field, content);
   };
-
-  // Utils
-  // superForm.utils = {  };
-
-  // Fields
-
 
   // Return
   return superForm;

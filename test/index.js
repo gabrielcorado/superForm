@@ -3,6 +3,9 @@
 // Global mithril
 global.m = require('mithril');
 
+// Global merge!
+global.merge = require('merge');
+
 // Define variables
 var jsdom = require('jsdom').jsdom,
     window = jsdom('<html><head></head><body></body></html>'),
@@ -13,8 +16,8 @@ var jsdom = require('jsdom').jsdom,
 
 // Some test fields
 fields = [
-  { name: 'firstname', type: 'text' },
-  { name: 'lastname', type: 'text' }
+  { name: 'firstname', fieldType: 'input', type: 'text' },
+  { name: 'lastname', fieldType: 'input', type: 'text' }
 ];
 
 // Tests
@@ -44,7 +47,16 @@ describe('superForm', function(){
 
   //
   it('should generate a field', function() {
+    // Set state to result
+    result = undefined;
 
+    // Generate first field
+    assert.doesNotThrow(function() {
+      result = testForm.generateField(fields[0]);
+    });
+
+    // Assert!
+    assert.notEqual(result, undefined);
   });
 
   //
