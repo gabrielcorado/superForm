@@ -36,7 +36,7 @@ paymentFields = [
       ]}
     ])
   ]}
-]
+];
 
 // Tests
 describe('superForm', function(){
@@ -69,21 +69,11 @@ describe('superForm', function(){
 
     // Generate first field
     assert.doesNotThrow(function() {
-      result.push(paymentForm.generateField(paymentForm.fields[0]))
+      for(i = 0; i < paymentForm.fields.length ; i++)
+        result.push(paymentForm.generateField(paymentForm.fields[i]))
     });
 
-    // put assert here
-  });
-
-  it('should generate a bunch of field', function() {
-    // Set state to result
-    result = [];
-
-    // Generate first field
-    assert.doesNotThrow(function() {
-      paymentForm.generate()
-    });
-
-    console.log(paymentForm.generate());
+    // Assert!
+    assert.notEqual(result, undefined);
   });
 });
