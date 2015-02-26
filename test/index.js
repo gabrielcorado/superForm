@@ -15,7 +15,7 @@ var superForm = require('../index.js');
 var testForm = null;
 
 // Some test fields
-paymentFields = [
+var testFields = [
   { name: 'Boleto', fieldType: 'input', type: 'radio' },
   { name: 'PagSeguro', fieldType: 'input', type: 'radio' },
   { name: 'Cartão', fieldType: 'input', type: 'radio', subForms: [
@@ -55,22 +55,21 @@ describe('superForm', function(){
   });
 
   it('should create a form', function() {
-    // superForm it!
-    paymentForm = new superForm('paymentForm', paymentFields);
+    // testForm it!
+    testForm = new superForm('paymentForm', testFields);
 
     // Assert
-    assert.notEqual(paymentForm, null);
-    assert.equal(paymentForm.fields, paymentFields);
+    assert.notEqual(testForm, null);
+    assert.equal(testForm.fields, testFields);
   });
 
   it('should generate a field', function() {
     // Set state to result
-    result = [];
+    result = undefined;
 
     // Generate first field
     assert.doesNotThrow(function() {
-      for(i = 0; i < paymentForm.fields.length ; i++)
-        result.push(paymentForm.generateField(paymentForm.fields[i]));
+      result = testForm.generateField(testFields[0]);
     });
 
     // Assert!
