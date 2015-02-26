@@ -2,8 +2,9 @@
 //
 
 // Checks mithril
-if( m === undefined )
+if( m === undefined ) {
   throw "mithril is not defined";
+}
 
 // Initializer
 ;(function(root, factory){
@@ -51,16 +52,18 @@ if( m === undefined )
   // Checks the value is valid if it's not use the defaultValue
   utils.defineValue = function(value, defaultValue, sameType) {
     // Set sameType default value
-    if( sameType === undefined )
+    if( sameType === undefined ) {
       sameType = true;
-    else
+    } else {
       sameType = !!sameType;
+    }
 
     // Check content and type
-    if( value === undefined || ( sameType && this.toString(value) !== this.toString(defaultValue) ) )
+    if( value === undefined || ( sameType && this.toString(value) !== this.toString(defaultValue) ) ) {
       return defaultValue;
-    else
+    } else {
       return value;
+    }
   };
 
   // Define superForm
@@ -72,8 +75,10 @@ if( m === undefined )
     options = utils.defineValue(options, {  });
 
     // Check arguements
-    if( name === undefined || ( fields === undefined || ! utils.isA(fields, 'array') ) || ! utils.isA(options, 'object') )
+    if( name === undefined || ( fields === undefined || ! utils.isA(fields, 'array') ) || ! utils.isA(options, 'object') ) {
       throw new ArgumentError('name and fields are required.');
+    }
+
 
     // Flags generate
     this.generated = false;
@@ -116,12 +121,9 @@ if( m === undefined )
 
   // generate each field and render
   superForm.prototype.generate = function(options) {
-    for(i = 0; i < this.fields.length; i++)
+    for(i = 0; i < this.fields.length; i++) {
       this.generateField(this.fields[i])
-  };
-
-  // Generates field value
-  // @param [Object] field - Form field
+    }
   };
 
   // Generates field value
@@ -135,8 +137,9 @@ if( m === undefined )
   // Required object keys are: name and fieldType
   superForm.prototype.generateField = function(field, options) {
     // Checks required keys
-    if( field.name === undefined || field.fieldType === undefined )
+    if( field.name === undefined || field.fieldType === undefined ) {
       throw new ArgumentError('when you generate a field, name and type are required');
+    }
 
     // Define options
     options = utils.defineValue(options, {  });
@@ -182,17 +185,19 @@ if( m === undefined )
     content.push(fieldTag);
 
     // Add subForms to it
-    for( var contentI = 0; contentI < _subForms.length; contentI++ )
+    for( var contentI = 0; contentI < _subForms.length; contentI++ ) {
       content.push(_subForms[contentI]);
-
+    }
+    
     // Return the template
     return superForm.templates[field.template](field, content);
   };
 
   superForm.prototype.findFieldBy = function(key, value) {
     // Checks key and value
-    if( ( key === undefined || !utils.isA(key, 'string') ) || ( value === undefined || !utils.isA(value, 'string') ) )
+    if( ( key === undefined || !utils.isA(key, 'string') ) || ( value === undefined || !utils.isA(value, 'string') ) ) {
       throw new ArgumentError('to find a field you need to specify key and value');
+    }
 
     // Result
     result = [ ];
@@ -203,8 +208,9 @@ if( m === undefined )
       var field = this.fields[i];
 
       // Checks field with value
-      if( field[key] === value )
+      if( field[key] === value ) {
         result.push(field);
+      }
     }
 
     // Return
@@ -214,15 +220,16 @@ if( m === undefined )
   // Get a field value
   superForm.prototype.get = function(key, options) {
     // Check forms has been generated and if field exists
-    if( ! this.generated )
+    if( ! this.generated ) {
       return undefined;
+    }
 
     // Define default options
     options = utils.defineValue(options, {  });
 
     // Find field
-    var field = this.findFieldBy('name', key),
-        result = [ ];
+    var field = this.findFieldBy('name', key);
+    var result = [ ];
 
     // Return!
     if( field[0] === undefined ) {

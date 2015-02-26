@@ -65,15 +65,27 @@ describe('superForm', function(){
 
   it('should generate a field', function() {
     // Set state to result
-    result = [];
+    result = undefined;
 
     // Generate first field
     assert.doesNotThrow(function() {
-      for(i = 0; i < paymentForm.fields.length ; i++)
-        result.push(paymentForm.generateField(paymentForm.fields[i]))
+      result = paymentForm.generateField(paymentFields[0]);
     });
 
     // Assert!
     assert.notEqual(result, undefined);
+  });
+
+  it('should generate a bunch of fields', function() {
+    // Set state to result
+    result = [];
+
+    // Generate first field
+    assert.doesNotThrow(function() {
+      paymentForm.generate()
+    });
+
+    // Assert!
+    // assert.notEqual(paymentForm.generate(), undefined);
   });
 });
