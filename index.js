@@ -113,10 +113,8 @@ if( m === undefined )
 
   // generate each field and render
   superForm.prototype.generate = function(options) {
-    for(i = 0; i < this.fields.length; i++){
-      // render template
-      this.generateFieldId(this.fields[i])
-    }
+    for(i = 0; i < this.fields.length; i++)
+      this.generateField(this.fields[i])
   };
 
   // Generates field value

@@ -18,7 +18,7 @@ var testForm = null;
 paymentFields = [
   { name: 'Boleto', fieldType: 'input', type: 'radio' },
   { name: 'PagSeguro', fieldType: 'input', type: 'radio' },
-  { name: 'Cartão', fieldType: 'input', type: 'radio', subForms: [
+  { name: 'Card', fieldType: 'input', type: 'radio', subForms: [
     new superForm('flags',[
       { name: 'Visa', fieldType: 'input', type: 'radio', subForms: [
         new superForm('installments', [
@@ -69,11 +69,21 @@ describe('superForm', function(){
 
     // Generate first field
     assert.doesNotThrow(function() {
-      for(i = 0; i < paymentForm.fields.length ; i++)
-        result.push(paymentForm.generateField(paymentForm.fields[i]))
+      result.push(paymentForm.generateField(paymentForm.fields[0]))
     });
 
-    // Assert!
-    assert.notEqual(result, undefined);
+    // put assert here
+  });
+
+  it('should generate a bunch of field', function() {
+    // Set state to result
+    result = [];
+
+    // Generate first field
+    assert.doesNotThrow(function() {
+      paymentForm.generate()
+    });
+
+    console.log(paymentForm.generate());
   });
 });
