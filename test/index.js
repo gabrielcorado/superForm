@@ -36,7 +36,7 @@ paymentFields = [
       ]}
     ])
   ]}
-]
+];
 
 // Tests
 describe('superForm', function(){
@@ -70,7 +70,7 @@ describe('superForm', function(){
     // Generate first field
     assert.doesNotThrow(function() {
       for(i = 0; i < paymentForm.fields.length ; i++)
-        result.push(paymentForm.generateField(paymentForm.fields[i]))
+        result.push(paymentForm.generateField(paymentForm.fields[i]));
     });
 
     // Assert!
