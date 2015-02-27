@@ -39,6 +39,11 @@ if( m === undefined ) {
     function: "[object Function]"
   };
 
+  // pretty print object
+  utils.d = function (obj) {
+    console.log(utils.inspect(obj, {showHidden: false, depth: null}));
+  }
+
   // Transform an object into string
   utils.toString = function(value) {
     return Object.prototype.toString.call(value);
