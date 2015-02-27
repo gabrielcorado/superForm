@@ -29,7 +29,7 @@ if( m === undefined ) {
   };
 
   // Utils
-  utils = {  };
+  var utils = {  };
 
   // Define object types
   utils.types = {
@@ -66,6 +66,96 @@ if( m === undefined ) {
     }
   };
 
+  // Field value
+  var fieldValue = function(value) {
+    // Set first value
+    this.set(value);
+
+    // Return this
+    return this;
+  };
+
+  // Set new value
+  fieldValue.prototype.set = function(value) {
+    // Store value
+    this.store = value;
+
+    // Define value type
+    if( utils.isA(this.store, 'array') )
+      this.type = 'collection';
+    else
+      this.type = 'simple';
+
+    // Default return
+    return true;
+  };
+
+  // Get value
+  fieldValue.prototype.get = function() {
+    return this.store;
+  };
+
+  fieldValue.prototype.valueIn = function(value) {
+    // Checks it is an collection
+    if( this.type != 'collection' )
+      return false;
+
+    // Each values
+    for( var i; i < this.store.length; i++ )
+      if( this.store[i] === value )
+        return true;
+
+    // Default return
+    return false;
+  };
+
+  // splice
+  fieldValue.prototype.addValue = function(value) {
+    // Checks it is an collection
+    if( this.type != 'collection' )
+      return false;
+
+    // Each values
+    for( var i; i < this.store.length; i++ ) {
+      if( this.store[i] === value )
+        return true;
+    }
+
+    // Add it
+    this.store.push(value);
+
+    // Default return
+    return true;
+  };
+
+  //
+  fieldValue.prototype.removeValue = function(value) {
+    // Checks it is an collection
+    if( this.type != 'collection' )
+      return false;
+
+    // Each values
+    for( var i; i < this.store.length; i++ ) {
+      // Checks value
+      if( this.store[i] === value ) {
+        // Remote it
+        this.store.splice(i, 1);
+
+        // Return
+        return true;
+      }
+    }
+
+    // Default return
+    return false;
+  };
+
+  //
+  fieldValue.prototype.toJSON = function() {
+    // Return the value and type
+    return { type: this.type, value: this.store };
+  };
+
   // Define superForm
   // @param [String] name - Form name
   // @param [Array] fields - Form fields
@@ -75,10 +165,9 @@ if( m === undefined ) {
     options = utils.defineValue(options, {  });
 
     // Check arguements
-    if( name === undefined || ( fields === undefined || ! utils.isA(fields, 'array') ) || ! utils.isA(options, 'object') ) {
+    if( name === undefined || ( fields === undefined || ! utils.isA(fields, 'object') ) || ! utils.isA(options, 'object') ) {
       throw new ArgumentError('name and fields are required.');
     }
-
 
     // Flags generate
     this.generated = false;
@@ -122,7 +211,7 @@ if( m === undefined ) {
   // generate each field and render
   superForm.prototype.generate = function(options) {
     for(i = 0; i < this.fields.length; i++) {
-      this.generateField(this.fields[i])
+      this.generateField(this.fields[i].name);
     }
   };
 
@@ -133,13 +222,19 @@ if( m === undefined ) {
   };
 
   // Generate field
-  // @param [Object] field - Field that'll be generated
+  // @param [String] name - Field name
   // Required object keys are: name and fieldType
-  superForm.prototype.generateField = function(field, options) {
+  superForm.prototype.generateField = function(name, options) {
+    // Get field
+    var field = this.fields[name];
+
+    // Checks field exists
+    if( field === undefined )
+      throw new ArgumentError('field name invalid');
+
     // Checks required keys
-    if( field.name === undefined || field.fieldType === undefined ) {
-      throw new ArgumentError('when you generate a field, name and type are required');
-    }
+    if( field.fieldType === undefined )
+      throw new ArgumentError('when you generate a field, type are required');
 
     // Define options
     options = utils.defineValue(options, {  });
@@ -150,25 +245,38 @@ if( m === undefined ) {
     // Set default field values
     field.id = utils.defineValue(field.id, fieldId);
     field.type = utils.defineValue(field.type, '');
-    field.defaultValue = utils.defineValue(field.defaultValue, '', false);
     field.classes = utils.defineValue(field.classes, '');
     field.template = utils.defineValue(field.template, 'default');
     field.collection = utils.defineValue(field.collection, false);
+    field.options = utils.defineValue(field.options, {  });
+    field.multiSelect = utils.defineValue(field.multiSelect, false);
+
+    // Set name
+    field.name = name;
+
+    // Default value
+    if( field.multiSelect )
+      field.defaultValue = utils.defineValue(field.defaultValue, [ ]);
+    else
+      field.defaultValue = utils.defineValue(field.defaultValue, '');
 
     // Field value
-    field.value = m.prop(field.defaultValue);
+    field.value = utils.defineValue(field.value, new fieldValue(field.defaultValue), false);
 
     // subForms
     field.subForms = utils.defineValue(field.subForms, [  ]);
     var _subForms = [  ];
 
-    // Each subForms
-    for( var i = 0; i < field.subForms.length; i++ ) {
-      // Get form
-      var form = field.subForms[i];
+    // Checks if field is a collection
+    if( ! field.collection ) {
+      // Each subForms
+      for( var i = 0; i < field.subForms.length; i++ ) {
+        // Get form
+        var form = field.subForms[i];
 
-      // Generate it and put it in other array
-      _subForms.push(form.generate());
+        // Generate it and put it in other array
+        _subForms.push(form.generate());
+      }
     }
 
     var fieldTag = merge(true, superForm.fieldsTypes[field.fieldType]);
@@ -177,6 +285,12 @@ if( m === undefined ) {
     fieldTag.attrs.class = field.classes;
     fieldTag.attrs.value = field.value;
     fieldTag.attrs.type = field.type;
+    fieldTag.attrs.onchange = (function(field) {
+      // Return
+      return function(e) {
+        m.withAttr('value', field.value.set)(e);
+      };
+    })(field);
 
     // Define the content
     var content = [  ];
@@ -188,55 +302,41 @@ if( m === undefined ) {
     for( var contentI = 0; contentI < _subForms.length; contentI++ ) {
       content.push(_subForms[contentI]);
     }
-    
+
     // Return the template
     return superForm.templates[field.template](field, content);
   };
 
-  superForm.prototype.findFieldBy = function(key, value) {
-    // Checks key and value
-    if( ( key === undefined || !utils.isA(key, 'string') ) || ( value === undefined || !utils.isA(value, 'string') ) ) {
-      throw new ArgumentError('to find a field you need to specify key and value');
-    }
-
-    // Result
-    result = [ ];
-
-    // Each fields
-    for( var i = 0; i < this.fields.length; i++ ) {
-      // Field
-      var field = this.fields[i];
-
-      // Checks field with value
-      if( field[key] === value ) {
-        result.push(field);
-      }
-    }
-
-    // Return
-    return result;
-  };
-
   // Get a field value
-  superForm.prototype.get = function(key, options) {
-    // Check forms has been generated and if field exists
-    if( ! this.generated ) {
-      return undefined;
-    }
+  superForm.prototype.get = function(name, options) {
+    // Get field
+    var field = this.fields[name];
+
+    // Checks field exists
+    if( field === undefined )
+      throw new ArgumentError('field name invalid');
 
     // Define default options
     options = utils.defineValue(options, {  });
 
-    // Find field
-    var field = this.findFieldBy('name', key);
-    var result = [ ];
-
     // Return!
-    if( field[0] === undefined ) {
-      return undefined;
-    } else {
-      return field[0].value();
-    }
+    return field.value.get();
+  };
+
+  // Set a field value
+  superForm.prototype.set = function(name, value, options) {
+    // Get field
+    var field = this.fields[name];
+
+    // Checks field exists
+    if( field === undefined )
+      throw new ArgumentError('field name invalid');
+
+    // Set new value
+    field.value.set(value);
+
+    // Return
+    return true;
   };
 
   // Return
