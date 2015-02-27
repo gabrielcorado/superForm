@@ -16,11 +16,15 @@ gulp.task('test', function() {
   .pipe(mocha());
 });
 
+// notification
+gulp.task('notify', function() {
+  console.log('====================== Test Runned ' + new Date().getTime() + ' Dance \\o/ ======================');
+});
+
 gulp.task('watch', function() {
-  console.log('====================== Watch Started ' + new Date().getTime() + ' Dance \o/ ======================');
   return gulp.watch(
     ['index.js','test/**/*.js'],
-    ['compile', 'test']);
+    ['compile', 'test', 'notify']);
 });
 
 // Default task

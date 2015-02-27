@@ -219,6 +219,7 @@ if( m === undefined ) {
     for(i = 0; i < this.fields.length; i++) {
       generatedFields.push(this.generateField(this.fields[i].name));
     }
+    utils.d (generatedFields)
     return generatedFields
   };
 
