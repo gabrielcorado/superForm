@@ -41,7 +41,9 @@ if( m === undefined ) {
 
   // pretty print object
   utils.d = function (obj) {
+    console.log('==================================================');
     console.log(utils.inspect(obj, {showHidden: false, depth: null}));
+    console.log('==================================================');
   }
 
   // Transform an object into string
@@ -215,12 +217,11 @@ if( m === undefined ) {
 
   // generate each field and render
   superForm.prototype.generate = function(options) {
-    generatedFields = []
-    for(i = 0; i < this.fields.length; i++) {
-      generatedFields.push(this.generateField(this.fields[i].name));
+    generatedFields = {}
+    for(field in this.fields) {
+      generatedFields[field] = this.generateField(field);
     }
-    utils.d (generatedFields)
-    return generatedFields
+    return generatedFields;
   };
 
   // Generates field value
