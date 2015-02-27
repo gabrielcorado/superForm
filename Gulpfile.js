@@ -6,19 +6,24 @@ var gulp = require('gulp'),
 // Compile
 gulp.task('compile', function() {
   return gulp.src('index.js')
-             .pipe(uglify())
-             .pipe(gulp.dest('dist'));
+  .pipe(uglify())
+  .pipe(gulp.dest('dist'));
 });
 
 // Test
 gulp.task('test', function() {
   return gulp.src('test/**/*.js')
-             .pipe(mocha());
+  .pipe(mocha());
 });
 
 gulp.task('watch', function() {
-  return gulp.watch(['index.js','test/**/*.js'], ['compile', 'test']);
+  console.log('====================== Watch Started ' + new Date().getTime() + ' Dance \o/ ======================');
+  return gulp.watch(
+    ['index.js','test/**/*.js'],
+    ['compile', 'test']);
 });
 
 // Default task
 gulp.task('default', ['compile', 'watch', 'test']);
+
+// node-debug $(which gulp)

@@ -29,7 +29,7 @@ if( m === undefined ) {
   };
 
   // Utils
-  var utils = {  };
+  var utils = require('util');
 
   // Define object types
   utils.types = {
@@ -210,9 +210,11 @@ if( m === undefined ) {
 
   // generate each field and render
   superForm.prototype.generate = function(options) {
+    generatedFields = []
     for(i = 0; i < this.fields.length; i++) {
-      this.generateField(this.fields[i].name);
+      generatedFields.push(this.generateField(this.fields[i].name));
     }
+    return generatedFields
   };
 
   // Generates field value
