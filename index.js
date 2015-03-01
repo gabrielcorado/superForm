@@ -59,11 +59,10 @@ if( m === undefined ) {
   // Checks the value is valid if it's not use the defaultValue
   utils.defineValue = function(value, defaultValue, sameType) {
     // Set sameType default value
-    if( sameType === undefined ) {
+    if( sameType === undefined )
       sameType = true;
-    } else {
+    else
       sameType = !!sameType;
-    }
 
     // Check content and type
     if( value === undefined || ( sameType && this.toString(value) !== this.toString(defaultValue) ) ) {
