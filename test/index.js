@@ -106,7 +106,7 @@ describe('superForm', function(){
 
     // Generate first field
     assert.doesNotThrow(function() {
-      testForm.generate()
+      testForm.generate();
     });
   });
 });

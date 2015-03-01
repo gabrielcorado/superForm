@@ -44,7 +44,7 @@ if( m === undefined ) {
     console.log('==================================================');
     console.log(utils.inspect(obj, {showHidden: false, depth: null}));
     console.log('==================================================');
-  }
+  };
 
   // Transform an object into string
   utils.toString = function(value) {
