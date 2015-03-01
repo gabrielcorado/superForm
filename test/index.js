@@ -135,12 +135,9 @@ describe('superForm', function(){
   });
 
   it('should generate the forms', function() {
-    // Set state to result
-    var result = undefined;
-
     // Generate first field
     assert.doesNotThrow(function() {
-      result = testForm.generate();
+      var result = testForm.generate();
     });
 
     assert.notEqual(result, undefined);
