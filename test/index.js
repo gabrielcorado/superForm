@@ -143,4 +143,21 @@ describe('superForm', function(){
       testForm.generate();
     });
   });
+
+  it('should submit form', function(done) {
+    // Generate form
+    testForm.generate();
+
+    // Set values
+    testForm.set('firstname', 'superForm');
+    testForm.set('sex', 'male');
+
+    testForm.submit(function(values) {
+      // assert
+      assert.equal(isEmpty(values), false);
+
+      // Done!
+      done();
+    });
+  });
 });

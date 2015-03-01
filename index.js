@@ -318,6 +318,15 @@ if( m === undefined ) {
     return superForm.templates[field.template](field, content);
   };
 
+  // Submit form
+  superForm.prototype.submit = function(cb) {
+    // Checks form has submit method
+    if( cb !== undefined && utils.isA(cb, 'function') )
+      cb(this.getAll());
+    else if( this.options.submit !== undefined && utils.isA(this.options.submit, 'function') )
+      this.options.submit(this.getAll());
+  };
+
   // Get a field value
   superForm.prototype.get = function(name, options) {
     // Get field
