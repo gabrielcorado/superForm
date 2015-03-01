@@ -235,7 +235,7 @@ if( m === undefined ) {
 
         },
         children: children
-      }
+      };
     } else {
       // Return a form
       return {
@@ -244,7 +244,7 @@ if( m === undefined ) {
           onsubmit: this.submit
         },
         children: children
-      }
+      };
     }
 
   };
