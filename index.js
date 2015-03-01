@@ -259,6 +259,9 @@ if( m === undefined ) {
     field.options = utils.defineValue(field.options, {  });
     field.multiSelect = utils.defineValue(field.multiSelect, false);
 
+    // Generated flag
+    field.generated = true;
+
     // Set name
     field.name = name;
 
@@ -324,6 +327,10 @@ if( m === undefined ) {
     if( field === undefined )
       throw new ArgumentError('field name invalid');
 
+    // Checks field has been generated
+    if( field.generated === undefined || ! field.generated )
+      return undefined;
+
     // Define default options
     options = utils.defineValue(options, {  });
 
@@ -340,11 +347,28 @@ if( m === undefined ) {
     if( field === undefined )
       throw new ArgumentError('field name invalid');
 
+    // Checks field has been generated
+    if( field.generated === undefined || ! field.generated )
+      return undefined;
+
     // Set new value
     field.value.set(value);
 
     // Return
     return true;
+  };
+
+  // Get all fields values
+  superForm.prototype.getAll = function() {
+    // Result
+    result = {  };
+
+    // Each fields
+    for( var name in this.fields )
+      result[name] = this.get(name);
+
+    // Return
+    return result;
   };
 
   // Return

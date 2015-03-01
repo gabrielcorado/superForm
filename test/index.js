@@ -25,7 +25,28 @@ var jsdom = require('jsdom').jsdom,
       }
     };
 
-// Some test fields
+// superForm it!
+testForm = new superForm('testForm', testFields);
+
+// Is empty function
+function isEmpty(obj) {
+
+  // null and undefined are "empty"
+  if (obj === null) return true;
+
+  // Assume if it has a length property with a non-zero value
+  // that that property is correct.
+  if (obj.length > 0)    return false;
+  if (obj.length === 0)  return true;
+
+  // Otherwise, does it have any properties of its own?
+  // Note that this doesn't handle
+  // toString and valueOf enumeration bugs in IE < 9
+  for (var key in obj)
+    if (Object.prototype.hasOwnProperty.call(obj, key)) return false;
+
+  return true;
+}
 
 // Tests
 describe('superForm', function(){
@@ -44,9 +65,6 @@ describe('superForm', function(){
   });
 
   it('should create a form', function() {
-    // superForm it!
-    testForm = new superForm('testForm', testFields);
-
     // Assert
     assert.notEqual(testFields, null);
     assert.equal(testForm.fields, testFields);
@@ -92,12 +110,28 @@ describe('superForm', function(){
 
     it('should set and get the values', function() {
       // Set a value
-      assert.equal(testForm.set('sex', 'superForm'), true);
+      assert.equal(testForm.set('sex', 'male'), true);
 
       // Get value
       assert.notEqual(testForm.get('sex'), undefined);
-      assert.equal(testForm.get('sex'), 'superForm');
+      assert.equal(testForm.get('sex'), 'male');
     });
+  });
+
+  it('should get all the fields values', function() {
+    // Generate fields
+    testForm.generateField('firstname');
+    testForm.generateField('sex');
+
+    // Set values
+    testForm.set('firstname', 'superForm');
+    testForm.set('sex', 'male');
+
+    // Get values
+    values = testForm.getAll();
+
+    //
+    assert.equal(isEmpty(values), false);
   });
 
   it('should generate a bunch of fields', function() {
