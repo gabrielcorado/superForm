@@ -134,14 +134,16 @@ describe('superForm', function(){
     assert.equal(isEmpty(values), false);
   });
 
-  it('should generate a bunch of fields', function() {
+  it('should generate the forms', function() {
     // Set state to result
-    result = [];
+    var result = undefined;
 
     // Generate first field
     assert.doesNotThrow(function() {
-      testForm.generate();
+      result = testForm.generate();
     });
+
+    assert.notEqual(result, undefined);
   });
 
   it('should submit form', function(done) {

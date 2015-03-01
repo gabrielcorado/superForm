@@ -216,11 +216,37 @@ if( m === undefined ) {
 
   // generate each field and render
   superForm.prototype.generate = function(options) {
-    generatedFields = {}
-    for(field in this.fields) {
-      generatedFields[field] = this.generateField(field);
+    // Define value
+    options = utils.defineValue(options, { });
+
+    // Children
+    var children = [ ];
+
+    // Each fields and generate them
+    for( var name in this.fields )
+      children.push(this.generateField(name));
+
+    // Checks is subForm
+    if( options.subForm !== undefined && options.subForm ) {
+      // Return a div
+      return {
+        tag: 'div',
+        attrs: {
+
+        },
+        children: children
+      }
+    } else {
+      // Return a form
+      return {
+        tag: 'form',
+        attrs: {
+          onsubmit: this.submit
+        },
+        children: children
+      }
     }
-    return generatedFields;
+
   };
 
   // Generates field value
